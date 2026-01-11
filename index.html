@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civil War Mastery | APUSH Study Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- LANDING SCREEN -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <section id="landing-screen" class="screen active">
+        <div class="landing-bg"></div>
+        <div class="landing-content">
+            <div class="landing-badge">APUSH Test Prep</div>
+            <h1 class="landing-title">The Civil War</h1>
+            <p class="landing-subtitle">1840 – 1877</p>
+            <p class="landing-desc">Master the causes, conflicts, and consequences of the war that remade America. Interactive study cards and challenging quizzes to prepare you for your AP exam.</p>
+            
+            <div class="landing-stats">
+                <div class="stat-item">
+                    <i data-lucide="book-open"></i>
+                    <span>26 Concepts</span>
+                </div>
+                <div class="stat-item">
+                    <i data-lucide="brain"></i>
+                    <span>26 Questions</span>
+                </div>
+                <div class="stat-item">
+                    <i data-lucide="trophy"></i>
+                    <span>Earn XP</span>
+                </div>
+            </div>
+
+            <div class="landing-actions">
+                <button onclick="showScreen('study')" class="btn-primary">
+                    <i data-lucide="book-marked"></i>
+                    Study Guide
+                </button>
+                <button onclick="showScreen('quiz-start')" class="btn-secondary">
+                    <i data-lucide="zap"></i>
+                    Take Quiz
+                </button>
+            </div>
+
+            <div class="xp-display" id="landing-xp">
+                <i data-lucide="star"></i>
+                <span id="total-xp">0</span> XP Earned
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- STUDY SCREEN -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <section id="study-screen" class="screen">
+        <header class="study-header">
+            <button onclick="showScreen('landing')" class="back-btn">
+                <i data-lucide="arrow-left"></i>
+            </button>
+            <h1>Study Guide</h1>
+            <button onclick="showScreen('quiz-start')" class="quiz-link">
+                <i data-lucide="zap"></i> Quiz
+            </button>
+        </header>
+
+        <div class="study-container">
+            <!-- Era Tabs -->
+            <div class="era-tabs">
+                <button onclick="filterStudy('causes')" id="tab-causes" class="era-tab active">
+                    <span class="era-years">1840–1861</span>
+                    <span class="era-name">Causes</span>
+                </button>
+                <button onclick="filterStudy('war')" id="tab-war" class="era-tab">
+                    <span class="era-years">1861–1865</span>
+                    <span class="era-name">The War</span>
+                </button>
+                <button onclick="filterStudy('reconstruction')" id="tab-reconstruction" class="era-tab">
+                    <span class="era-years">1865–1877</span>
+                    <span class="era-name">Reconstruction</span>
+                </button>
+            </div>
+
+            <!-- Study Cards Grid -->
+            <div id="study-grid" class="study-grid">
+                <!-- Cards injected by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- STUDY CARD MODAL -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="card-modal" class="modal-overlay" onclick="closeCardModal()">
+        <div class="card-modal-content" onclick="event.stopPropagation()">
+            <button onclick="closeCardModal()" class="modal-close">
+                <i data-lucide="x"></i>
+            </button>
+            
+            <div class="card-modal-header">
+                <span id="card-tag" class="card-tag">Topic</span>
+                <h2 id="card-title" class="card-title">Title</h2>
+                <p id="card-subtitle" class="card-subtitle">Subtitle</p>
+            </div>
+
+            <div class="card-modal-body">
+                <div class="card-section">
+                    <h3><i data-lucide="scroll-text"></i> The Story</h3>
+                    <p id="card-desc"></p>
+                </div>
+
+                <div class="card-quiz-section">
+                    <h3><i data-lucide="brain"></i> Memory Check</h3>
+                    <p id="card-question" class="card-question"></p>
+                    <button onclick="revealAnswer()" id="reveal-btn" class="reveal-btn">
+                        <i data-lucide="eye"></i> Reveal Key Takeaway
+                    </button>
+                    <div id="card-answer" class="card-answer hidden">
+                        <p id="card-answer-text"></p>
+                    </div>
+                </div>
+
+                <div class="card-nav">
+                    <button onclick="prevCard()" id="prev-card-btn" class="card-nav-btn">
+                        <i data-lucide="chevron-left"></i> Previous
+                    </button>
+                    <button onclick="nextCard()" id="next-card-btn" class="card-nav-btn">
+                        Next <i data-lucide="chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- QUIZ START SCREEN -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <section id="quiz-start-screen" class="screen">
+        <div class="quiz-start-container">
+            <button onclick="showScreen('landing')" class="back-btn-dark">
+                <i data-lucide="arrow-left"></i>
+            </button>
+
+            <div class="quiz-start-card">
+                <div class="quiz-icon">
+                    <i data-lucide="swords"></i>
+                </div>
+                <h1>Civil War Challenge</h1>
+                <p>Test your knowledge on the Causes, the War, and Reconstruction.</p>
+
+                <div class="quiz-meta">
+                    <div class="meta-item">
+                        <i data-lucide="list-checks"></i>
+                        <span>26 Questions</span>
+                    </div>
+                    <div class="meta-item">
+                        <i data-lucide="flame"></i>
+                        <span>Earn up to 260 XP</span>
+                    </div>
+                </div>
+
+                <div class="difficulty-select">
+                    <label>Difficulty</label>
+                    <div class="difficulty-options">
+                        <button onclick="setDifficulty('standard')" id="diff-standard" class="diff-btn active">
+                            <i data-lucide="target"></i>
+                            Standard
+                        </button>
+                        <button onclick="setDifficulty('hard')" id="diff-hard" class="diff-btn">
+                            <i data-lucide="flame"></i>
+                            Hard Mode
+                        </button>
+                    </div>
+                    <p class="diff-desc" id="diff-desc">Multiple attempts allowed. Hints available.</p>
+                </div>
+
+                <button onclick="startQuiz()" class="start-quiz-btn">
+                    <i data-lucide="play"></i>
+                    Begin Challenge
+                </button>
+
+                <button onclick="showScreen('study')" class="study-first-btn">
+                    <i data-lucide="book-open"></i>
+                    Study First
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- QUIZ SCREEN -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <section id="quiz-screen" class="screen">
+        <div class="quiz-container">
+            <!-- Quiz Header -->
+            <header class="quiz-header">
+                <div class="quiz-progress-info">
+                    <span class="q-counter">Q <span id="q-num">1</span>/26</span>
+                    <div class="xp-badge">
+                        <i data-lucide="star"></i>
+                        <span id="quiz-xp">0</span> XP
+                    </div>
+                </div>
+                <button onclick="toggleQuizMap()" class="map-btn">
+                    <i data-lucide="grid-3x3"></i>
+                </button>
+            </header>
+
+            <!-- Progress Bar -->
+            <div class="quiz-progress-bar">
+                <div id="quiz-progress" class="quiz-progress-fill"></div>
+            </div>
+
+            <!-- Streak Indicator -->
+            <div id="streak-indicator" class="streak-indicator hidden">
+                <i data-lucide="flame"></i>
+                <span id="streak-count">0</span> Streak!
+            </div>
+
+            <!-- Question Card -->
+            <div class="question-card">
+                <span id="q-tag" class="q-tag">Topic</span>
+                <h2 id="q-text" class="q-text">Question text goes here?</h2>
+
+                <div class="hint-section">
+                    <button onclick="useHint()" id="hint-btn" class="hint-btn">
+                        <i data-lucide="lightbulb"></i>
+                        <span>Need a Hint? (-2 XP)</span>
+                    </button>
+                    <div id="hint-box" class="hint-box hidden">
+                        <p id="hint-text"></p>
+                    </div>
+                </div>
+
+                <div id="options-container" class="options-container">
+                    <!-- Options injected by JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- QUIZ MAP MODAL -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="quiz-map-modal" class="modal-overlay" onclick="toggleQuizMap()">
+        <div class="quiz-map-content" onclick="event.stopPropagation()">
+            <div class="quiz-map-header">
+                <h3>Question Map</h3>
+                <button onclick="toggleQuizMap()"><i data-lucide="x"></i></button>
+            </div>
+            <div id="quiz-map-grid" class="quiz-map-grid">
+                <!-- Grid injected by JS -->
+            </div>
+            <div class="map-legend">
+                <div class="legend-item"><span class="dot correct"></span> Correct</div>
+                <div class="legend-item"><span class="dot wrong"></span> Wrong</div>
+                <div class="legend-item"><span class="dot current"></span> Current</div>
+                <div class="legend-item"><span class="dot unanswered"></span> Unanswered</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- FEEDBACK MODAL -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="feedback-modal" class="modal-overlay">
+        <div class="feedback-content">
+            <div id="feedback-header" class="feedback-header correct">
+                <div class="feedback-icon">
+                    <i data-lucide="check"></i>
+                </div>
+                <div class="feedback-title">
+                    <h3 id="feedback-title-text">Correct!</h3>
+                    <span id="feedback-xp" class="feedback-xp">+10 XP</span>
+                </div>
+            </div>
+            <div class="feedback-body">
+                <p id="feedback-rationale"></p>
+            </div>
+            <div class="feedback-actions">
+                <button onclick="tryAgain()" id="try-again-btn" class="try-again-btn hidden">
+                    Try Again
+                </button>
+                <button onclick="nextQuestion()" id="next-q-btn" class="next-q-btn">
+                    Next Question <i data-lucide="arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- RESULTS SCREEN -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <section id="results-screen" class="screen">
+        <div class="results-container">
+            <div class="results-card">
+                <div id="results-icon" class="results-icon">
+                    <i data-lucide="trophy"></i>
+                </div>
+
+                <h1>Challenge Complete!</h1>
+                
+                <div class="score-display">
+                    <div class="score-circle">
+                        <span id="final-percent">85</span>%
+                    </div>
+                    <p id="score-breakdown">22/26 Correct</p>
+                </div>
+
+                <div class="xp-earned">
+                    <i data-lucide="star"></i>
+                    <span>+<span id="xp-earned">220</span> XP Earned</span>
+                </div>
+
+                <p id="results-message" class="results-message">Outstanding work!</p>
+
+                <div class="results-actions">
+                    <button onclick="reviewAnswers()" class="review-btn">
+                        <i data-lucide="clipboard-list"></i>
+                        Review Answers
+                    </button>
+                    <button onclick="showScreen('study')" class="study-btn">
+                        <i data-lucide="book-open"></i>
+                        Study Guide
+                    </button>
+                    <button onclick="restartQuiz()" class="restart-btn">
+                        <i data-lucide="rotate-ccw"></i>
+                        Try Again
+                    </button>
+                    <button onclick="showScreen('landing')" class="home-btn">
+                        <i data-lucide="home"></i>
+                        Home
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <!-- XP POPUP -->
+    <!-- ═══════════════════════════════════════════════════════════════════ -->
+    <div id="xp-popup" class="xp-popup hidden">
+        <i data-lucide="star"></i>
+        <span id="xp-popup-text">+10 XP</span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
